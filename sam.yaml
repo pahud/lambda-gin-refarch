@@ -27,8 +27,8 @@ Resources:
             Method: any
 
 Outputs:
-  SampleGinApi:
+  DemoGinApi:
     Description: URL for application
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ping'
     Export:
-      Name: SampleGinApi
+      Name: DemoGinApi

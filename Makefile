@@ -25,12 +25,13 @@
 # For more information, please refer to <http://unlicense.org/>
 #
 
-HANDLER ?= main
-PACKAGE ?= $(HANDLER)
-GOPATH  ?= $(HOME)/go
-GOOS    ?= linux
-GOOSDEV	?= $(shell uname -s)
-GOARCH  ?= amd64
+HANDLER 	?= main
+PACKAGE 	?= $(HANDLER)
+GOPATH  	?= $(HOME)/go
+GOOS    	?= linux
+GOOSDEV		?= $(shell uname -s)
+GOARCH  	?= amd64
+# modify this as your own S3 temp bucket. Make sure your locak IAM user have read/write access
 S3TMPBUCKET	?= pahud-tmp
 STACKNAME	?= lambda-gin-refarch
 
