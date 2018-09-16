@@ -11,13 +11,6 @@ Resources:
       MemorySize: 128
       Policies: 
         - AWSLambdaBasicExecutionRole
-        # - Version: '2012-10-17' # Policy Document
-        #   Statement:
-        #     - Effect: Allow
-        #       Action:
-        #         - dynamodb:GetItem
-        #         - dynamodb:PutItem
-        #       Resource: '*'
       Timeout: 10
       Events:
         GetResource:
