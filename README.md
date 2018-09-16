@@ -6,8 +6,8 @@
 
 ## Features 
 - develop, test and debug locally with your favirote IDE like VSCode
-- run locally or in AWS Lambda with the same source code.
-- single `make world` build, zip, package and deploy to AWS Lambda and Amazon API Gateway with no hassle.
+- run locally or in AWS Lambda and Amazon API Gateway with the same source code.
+- single `make world` to build, zip, package and deploy to AWS Lambda and Amazon API Gateway with no hassle.
 
 
 
