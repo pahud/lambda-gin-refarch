@@ -96,6 +96,7 @@ Try request the URL with cURL or http browser:
 ## Clean up
 
 Now you have a simple **Gin HTTP Service in Golang** which can be deployed locally and in AWS Serverless with exactly the same source code. Golang has extremely excellent performanc for AWS Lambda especially when your Lambda container being reused. Check your cloudwatch log for the `/ping` request, the duration could be less than `1ms` when you reuse the pre-warmed lambda container (check [this tweet](https://twitter.com/pahudnet/status/1038817717581570049)).
+![](https://pbs.twimg.com/media/DmqfMVZUUAIdH3a.jpg)
 
 To clean up the serverless environment you deployed on AWS, just delete the cloudformaton stack. You may optionally manually remove everyting under the intermediate S3 bucket if you like.
 
