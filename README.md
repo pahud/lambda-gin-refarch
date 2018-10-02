@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/pahud/lambda-gin-refarch.svg?branch=master)](https://travis-ci.org/pahud/lambda-gin-refarch)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pahud/lambda-gin-refarch)](https://goreportcard.com/report/github.com/pahud/lambda-gin-refarch)
 
 # lambda-gin-refarch
 
