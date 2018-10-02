@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pahud/lambda-gin-refarch.svg?branch=master)](https://travis-ci.org/pahud/lambda-gin-refarch)
+
 # lambda-gin-refarch
 
 **lambda-gin-refarch** is a reference architecture for AWS Lambda with Golang([Gin HTTP Framework](https://github.com/gin-gonic/gin)), Amazon API Gateway and [AWS SAM](https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html) deployment.
