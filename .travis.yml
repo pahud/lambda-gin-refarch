@@ -14,10 +14,12 @@ go:
 git:
   depth: 1
 
-go_import_path: github.com/aws/amazon-vpc-cni-k8s
-
 # Install needed tools
 #install:
+
+install:
+  - go get -u github.com/golang/dep/...
+  - dep ensure
 #  - go get -u golang.org/x/lint/golint
 
 # Tests to run
