@@ -60,40 +60,120 @@ Of course, you will see the Gin access log in the terminal.
 
 ## Deploy to AWS Lambda and Amazon API Gateway
 
-Edit `Makefile`  and update 2 variables below
+Edit `Makefile`  and update the following variables
 
 ```
 S3TMPBUCKET	?= pahud-tmp
 STACKNAME	?= lambda-gin-refarch
+LAMBDA_REGION ?= us-west-2
 ```
 
-- **S3TMPBUCKET** - change this to your private S3 bucket and make sure you have read/write access to it. This is an intermediate S3 bucket for AWS SAM package and deploy.
+- **S3TMPBUCKET** - change this to your private S3 bucket and make sure you have read/write access to it. This is an intermediate S3 bucket for AWS SAM CLI to deploy as a staging bucket.
 - **STACKNAME** - change this to your favorite cloudformatoin stack name.
+- **LAMBDA_REGION** - the region ID you are deploying to
 
 
 
-When you complete, Just type `make world` and you will see the `go build`, `zip` the compiled binary `main` into `main.zip` ,`aws cloudformation package` to package your Lambda bundle and eventually `aws cloudformation deploy` to deploy your serverless applicationto AWS.
+When you complete, Just run `make world` and you will see the `go build`, `zip` the compiled binary `main` into `main.zip` and `sam deploy` to deploy your `main.zip` bundle AWS Lambda and provision API Gateway together.
+
+```bash
+$ make world
+```
+Output
+```
+Checking dependencies...
+Building...
+Packing binary...
+updating: main (deflated 65%)
+
+        SAM CLI now collects telemetry to better understand customer needs.
+
+        You can OPT OUT and disable telemetry collection by setting the
+        environment variable SAM_CLI_TELEMETRY=0 in your shell.
+        Thanks for your help!
+
+        Learn More: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-telemetry.html
 
 
+        Deploying with following values
+        ===============================
+        Stack name                 : lambda-gin-refarch
+        Region                     : None
+        Confirm changeset          : False
+        Deployment s3 bucket       : pahud-tmp
+        Capabilities               : ["CAPABILITY_IAM"]
+        Parameter overrides        : {}
 
-![](images/04.png)
+Initiating deployment
+=====================
+Uploading to 229eee6e0deca8e343c1c8548c7bc968  4061671 / 4061671.0  (100.00%)
+Uploading to bd6a009417ef9ae6a9cbede486960e57.template  716 / 716.0  (100.00%)
+Waiting for changeset to be created..
+
+CloudFormation stack changeset
+------------------------------------------------------------------------------------------------
+Operation                        LogicalResourceId                ResourceType                   
+------------------------------------------------------------------------------------------------
+* Modify                         SampleFunction                   AWS::Lambda::Function          
+* Modify                         ServerlessRestApi                AWS::ApiGateway::RestApi       
+------------------------------------------------------------------------------------------------
+
+Changeset created successfully. arn:aws:cloudformation:us-west-2:112233445566:changeSet/samcli-deploy1582098819/a4812da7-2045-4b80-b891-6c1c63f75f0c
+
+
+2020-02-19 07:53:46 - Waiting for stack create/update to complete
+
+CloudFormation events from changeset
+-------------------------------------------------------------------------------------------------
+ResourceStatus           ResourceType             LogicalResourceId        ResourceStatusReason   
+-------------------------------------------------------------------------------------------------
+UPDATE_IN_PROGRESS       AWS::Lambda::Function    SampleFunction           -                      
+UPDATE_COMPLETE          AWS::Lambda::Function    SampleFunction           -                      
+UPDATE_COMPLETE          AWS::CloudFormation::S   lambda-gin-refarch       -                      
+                         tack                                                                     
+UPDATE_COMPLETE_CLEANU   AWS::CloudFormation::S   lambda-gin-refarch       -                      
+P_IN_PROGRESS            tack                                                                     
+-------------------------------------------------------------------------------------------------
+
+Stack lambda-gin-refarch outputs:
+-------------------------------------------------------------------------------------------------
+OutputKey-Description                            OutputValue                                    
+-------------------------------------------------------------------------------------------------
+DemoGinApi - URL for application                 https://zkkzpf9vr2.execute-api.us-             
+                                                 west-2.amazonaws.com/Prod/ping                 
+-------------------------------------------------------------------------------------------------
+
+Successfully created/updated stack - lambda-gin-refarch in us-west-2
+
+
+# print the cloudformation stack outputs
+aws --region us-west-2 cloudformation describe-stacks --stack-name "lambda-gin-refarch" --query 'Stacks[0].Outputs'
+[
+    {
+        "OutputKey": "DemoGinApi",
+        "OutputValue": "https://zkkzpf9vr2.execute-api.us-west-2.amazonaws.com/Prod/ping",
+        "Description": "URL for application",
+        "ExportName": "DemoGinApi"
+    }
+]
+[OK] Layer version deployed.
+```
 
 
 
 ## Get your API Gateway URL
 
-Go to cloudformation console, check your **StackName** and click the **Outputs** tab. The value is your API URL.
-
-![](images/05.png)
-
+You will see the API Gateway URL in the `OutputValue` above.
 
 
 Try request the URL with cURL or http browser:
 
-![](images/06.png)
-
-
-
+```bash
+curl -s  https://zkkzpf9vr2.execute-api.us-west-2.amazonaws.com/Prod/ping | jq -r                                                  
+{
+  "message": "pong"
+}
+```
 
 
 ## Clean up

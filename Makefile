@@ -34,6 +34,7 @@ GOARCH  	?= amd64
 # modify this as your own S3 temp bucket. Make sure your locak IAM user have read/write access
 S3TMPBUCKET	?= pahud-tmp
 STACKNAME	?= lambda-gin-refarch
+LAMBDA_REGION ?= us-west-2
 
 WORKDIR = $(CURDIR:$(GOPATH)%=/go%)
 ifeq ($(WORKDIR),$(CURDIR))
@@ -62,14 +63,28 @@ clean:
 	@echo "Cleaning up..."
 	@rm -rf $(HANDLER) $(PACKAGE).zip
 
-package:
-	@echo "sam packaging..."
-	@aws cloudformation package --template-file sam.yaml --s3-bucket $(S3TMPBUCKET) --output-template-file sam-packaged.yaml
+# package:lambda
+# 	@echo "sam packaging..."
+# 	@aws cloudformation package --template-file sam.yaml --s3-bucket $(S3TMPBUCKET) --output-template-file sam-packaged.yaml
 
 deploy:
 	@echo "sam deploying..."
 	@aws cloudformation deploy --template-file sam-packaged.yaml --stack-name $(STACKNAME) --capabilities CAPABILITY_IAM
 
-world: all deploy
+sam-deploy:
+	@docker run -i \
+	-v $(PWD):/home/samcli/workdir \
+	-v $(HOME)/.aws:/home/samcli/.aws \
+	-w /home/samcli/workdir \
+	-e AWS_DEFAULT_REGION=$(LAMBDA_REGION) \
+	pahud/aws-sam-cli:latest sam deploy --template-file ./sam.yaml --stack-name "$(STACKNAME)" \
+	--capabilities CAPABILITY_IAM \
+	--s3-bucket $(S3TMPBUCKET)
+	# print the cloudformation stack outputs
+	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(STACKNAME)" --query 'Stacks[0].Outputs'
+	@echo "[OK] Layer version deployed."
 
-.PHONY: all dep build pack clean package world
+
+world: all sam-deploy
+
+.PHONY: all dep build pack clean package sam-deploy world
