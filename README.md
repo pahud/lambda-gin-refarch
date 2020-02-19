@@ -225,7 +225,7 @@ We need build the `main` binary and pack it into `main.zip` before AWS CDK can d
 ```bash
 # build the main and compress it into main.zip
 $ cd lambda-gin-refarch
-$ make dep build pac  # main.zip should be created in current directory
+$ make dep build pack  # main.zip should be created in current directory
 # now go to cdk directory to deploy the stack
 $ cd cdk
 $ cdk deploy
