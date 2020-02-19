@@ -41,7 +41,7 @@ ifeq ($(WORKDIR),$(CURDIR))
 	WORKDIR = /tmp
 endif
 
-all: dep build pack package
+all: dep build pack
 
 dep:
 	@echo "Checking dependencies..."
@@ -84,7 +84,14 @@ sam-deploy:
 	aws --region $(LAMBDA_REGION) cloudformation describe-stacks --stack-name "$(STACKNAME)" --query 'Stacks[0].Outputs'
 	@echo "[OK] Layer version deployed."
 
+destroy:
+	@echo "destroying the stack"
+	@aws cloudformation delete-stack --stack-name $(STACKNAME)
+	@echo "=> go to cloudformation console to check the delete status"
+	@echo "=> https://$(LAMBDA_REGION).console.aws.amazon.com/cloudformation/home?region=$(LAMBDA_REGION)#/stacks"
+
+
 
 world: all sam-deploy
 
-.PHONY: all dep build pack clean package sam-deploy world
+.PHONY: all dep build pack clean package sam-deploy world destroy

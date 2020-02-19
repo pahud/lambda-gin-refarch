@@ -161,6 +161,7 @@ aws --region us-west-2 cloudformation describe-stacks --stack-name "lambda-gin-r
 
 
 
+
 ## Get your API Gateway URL
 
 You will see the API Gateway URL in the `OutputValue` above.
@@ -175,13 +176,82 @@ curl -s  https://zkkzpf9vr2.execute-api.us-west-2.amazonaws.com/Prod/ping | jq -
 }
 ```
 
-
 ## Clean up
 
-Now you have a simple **Gin HTTP Service in Golang** which can be deployed locally and in AWS Serverless with exactly the same source code. Golang has extremely excellent performanc for AWS Lambda especially when your Lambda container being reused. Check your cloudwatch log for the `/ping` request, the duration could be less than `1ms` when you reuse the pre-warmed lambda container (check [this tweet](https://twitter.com/pahudnet/status/1038817717581570049)).
+Now you have a simple **Gin HTTP Service in Golang** which can be deployed locally and in AWS Serverless with exactly the same source code. Golang has extremely excellent performance for AWS Lambda especially when your Lambda container is being reused or running with AWS Lambda [provisioned concurrency](https://aws.amazon.com/blogs/aws/new-provisioned-concurrency-for-lambda-functions/). Check your cloudwatch log for the `/ping` request, the duration could be less than `1ms` when you reuse the pre-warmed lambda container (check [this tweet](https://twitter.com/pahudnet/status/1038817717581570049)).
 ![](https://pbs.twimg.com/media/DmqfMVZUUAIdH3a.jpg)
+
+
+```bash                                                                                                         
+# destroy the entire cloudformation stack
+$ make destroy    
+destroying the stack
+=> go to cloudformation console to check the delete status
+=> https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks
+```
 
 To clean up the serverless environment you deployed on AWS, just delete the cloudformaton stack. You may optionally manually remove everyting under the intermediate S3 bucket if you like.
 
+
+## AWS CDK
+
+Alternatively, you may deploy this stack with AWS CDK as well. Consider the following AWS CDK sample:
+
+```ts
+import * as cdk from '@aws-cdk/core';
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as apigateway from '@aws-cdk/aws-apigateway';
+
+export class CdkStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    const handler = new lambda.Function(this, 'LambdaHandler', {
+      code: lambda.Code.fromAsset('../main.zip'),
+      handler: 'main',
+      runtime: lambda.Runtime.GO_1_X,
+    })
+
+    new apigateway.LambdaRestApi(this, 'API', {
+      handler
+    })
+  }
+}
+```
+
+We need build the `main` binary and pack it into `main.zip` before AWS CDK can deploy it.
+
+```bash
+# build the main and compress it into main.zip
+$ cd lambda-gin-refarch
+$ make dep build pac  # main.zip should be created in current directory
+# now go to cdk directory to deploy the stack
+$ cd cdk
+$ cdk deploy
+```
+Response
+```
+Outputs:
+CdkStack.APIEndpoint1793E782 = https://s334baiyoa.execute-api.us-west-2.amazonaws.com/prod/
+```
+test it
+
+```bash
+curl -s https://s334baiyoa.execute-api.us-west-2.amazonaws.com/prod/ | jq -r                                                      
+{
+  "text": "Welcome to gin lambda server."
+}
+curl -s https://s334baiyoa.execute-api.us-west-2.amazonaws.com/prod/ping | jq -r                                                   
+{
+  "message": "pong"
+}
+# to clean up everything
+$ cdk destroy
+```
+
+
+# Known Issues
+
+- API Gateway `custom domain` with base path mapping may not be working when you configure the base path. See [#1](https://github.com/pahud/lambda-gin-refarch/issues/1) for the detail.
 
 
