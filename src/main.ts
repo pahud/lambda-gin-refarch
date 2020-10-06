@@ -1,6 +1,6 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda';
 import * as apigateway from '@aws-cdk/aws-apigateway';
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as cdk from '@aws-cdk/core';
 
 export class MyStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: cdk.StackProps = {}) {
@@ -10,11 +10,11 @@ export class MyStack extends cdk.Stack {
       code: lambda.Code.fromAsset('main.zip'),
       handler: 'main',
       runtime: lambda.Runtime.GO_1_X,
-    })
+    });
 
     new apigateway.LambdaRestApi(this, 'API', {
-      handler
-    })
+      handler,
+    });
   }
 }
 
