@@ -1,7 +1,5 @@
-const {
-  AwsCdkTypeScriptApp,
-  GithubWorkflow,
-} = require('projen');
+const { AwsCdkTypeScriptApp } = require('projen');
+const { Automation } = require('projen-automate-it');
 
 const AUTOMATION_TOKEN = 'GITHUB_TOKEN';
 
@@ -14,60 +12,24 @@ const project = new AwsCdkTypeScriptApp({
   repository: "https://github.com/pahud/eks-lambda-py.git",
   dependabot: false,
   antitamper: false,
+  defaultReleaseBranch: 'main',
   cdkDependencies: [
     "@aws-cdk/core",
     "@aws-cdk/aws-apigateway",
     "@aws-cdk/aws-lambda",
-  ]
+  ],
+    devDeps: [
+    'projen-automate-it',
+  ],
 });
 
-// project.addDependencies({
-//   "@pahud/aws-codebuild-patterns": Semver.caret('1.1.0'),
-// });
-
-
-// create a custom projen and yarn upgrade workflow
-const workflow = new GithubWorkflow(project, 'ProjenYarnUpgrade');
-
-workflow.on({
-  schedule: [{
-    cron: '0 6 * * *'
-  }], // 6am every day
-  workflow_dispatch: {}, // allow manual triggering
+const automation = new Automation(project, {
+  automationToken: AUTOMATION_TOKEN,
 });
 
-workflow.addJobs({
-  upgrade: {
-    'runs-on': 'ubuntu-latest',
-    'steps': [
-      ...project.workflowBootstrapSteps,
-
-      // yarn upgrade
-      {
-        run: `yarn upgrade`
-      },
-
-      // upgrade projen
-      {
-        run: `yarn projen:upgrade`
-      },
-
-      // submit a PR
-      {
-        name: 'Create Pull Request',
-        uses: 'peter-evans/create-pull-request@v3',
-        with: {
-          'token': '${{ secrets.' + AUTOMATION_TOKEN + ' }}',
-          'commit-message': 'chore: upgrade projen',
-          'branch': 'auto/projen-upgrade',
-          'title': 'chore: upgrade projen and yarn',
-          'body': 'This PR upgrades projen and yarn upgrade to the latest version',
-          'labels': 'auto-merge',
-        }
-      },
-    ],
-  },
-});
+automation.projenYarnUpgrade();
+automation.autoApprove();
+automation.autoMerge();
 
 
 
