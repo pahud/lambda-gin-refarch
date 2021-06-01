@@ -2,7 +2,7 @@
   "name": "lambda-gin-refarch",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pahud/eks-lambda-py.git"
+    "url": "https://github.com/pahud/lambda-gin-refarchgit .git"
   },
   "scripts": {
     "clobber": "npx projen clobber",
