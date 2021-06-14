@@ -2146,9 +2146,9 @@ console-control-strings@^1.0.0, console-control-strings@~1.1.0:
   integrity sha1-PXz0Rk22RG6mRL9LOVB/mFEAjo4=
 
 constructs@^3.3.69:
-  version "3.3.77"
-  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.77.tgz#7c2d8eb9758a9a0c1e7f194410a19a1f6e474008"
-  integrity sha512-A9xWepIkiED0baaEWxokUvRnPrxcAwoCsyIPDAJ3VqQ90juiIHQ0gkW9GX0nG6c+Go5l1dL5FZIFZBeayx+xIg==
+  version "3.3.79"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.3.79.tgz#8b59b2f36a77c911ea16670cb39421492ba5af31"
+  integrity sha512-QvWSxLSDDdyduoXMtrUekq6aEQVWVNoQ0PiNkCQg9bJDL8QYGRqGv+8A+bwBQlVUjUOZ9sORDP4hF00CVQurlA==
 
 convert-source-map@^1.4.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
